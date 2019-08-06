@@ -5,7 +5,8 @@ const inquirer = require('inquirer');
 const childProcess = require('child_process');
 const Spinner = require('cli-spinner').Spinner;
 const copySourceFiles = require('./utils/copySourceFiles');
-const root = process.cwd();
+const root = process.cwd().replace(/[\\]/g, '/');
+const currentDir = __dirname.replace(/[\\]/g, '/');
 
 const existingFiles = fs.readdirSync(root);
 if (existingFiles.length) {
@@ -14,12 +15,12 @@ if (existingFiles.length) {
 }
 
 // Copy source files
-copySourceFiles(`${__dirname}/source/json`, 'json');
-copySourceFiles(`${__dirname}/source/src`, 'src');
-copySourceFiles(`${__dirname}/source/.eslintrc`, '.eslintrc');
-copySourceFiles(`${__dirname}/source/.gitignore`, '.gitignore');
-copySourceFiles(`${__dirname}/source/babel.config.js`, 'babel.config.js');
-copySourceFiles(`${__dirname}/source/plugin.test.js`, 'plugin.test.js');
+copySourceFiles(`${currentDir}/source/json`, 'json');
+copySourceFiles(`${currentDir}/source/src`, 'src');
+copySourceFiles(`${currentDir}/source/.eslintrc`, '.eslintrc');
+copySourceFiles(`${currentDir}/source/.gitignore`, '.gitignore');
+copySourceFiles(`${currentDir}/source/babel.config.js`, 'babel.config.js');
+copySourceFiles(`${currentDir}/source/plugin.test.js`, 'plugin.test.js');
 
 // Copy package.json file
 inquirer.prompt([
@@ -40,7 +41,7 @@ inquirer.prompt([
     }
 ]).then(({ projectName, fileName, author }) => {
     // Read current content of package.json and rollup.config.js files
-    const packageJson = fs.readFileSync(`${__dirname}/source/package.json`).toString();
+    const packageJson = fs.readFileSync(`${currentDir}/source/package.json`).toString();
     try {
         const packageJsonParsed = JSON.parse(packageJson);
         packageJsonParsed.name = projectName;
@@ -52,14 +53,14 @@ inquirer.prompt([
         console.log(colors.bold(colors.red('Package JSON file is not readable')));
     }
     try {
-        let rollupConfig = fs.readFileSync(`${__dirname}/source/rollup.config.js`).toString();
+        let rollupConfig = fs.readFileSync(`${currentDir}/source/rollup.config.js`).toString();
         rollupConfig = rollupConfig.replace(/\{fileName\}/g, fileName);
         fs.writeFileSync(`${root}/rollup.config.js`, rollupConfig);
     } catch (e) {
         console.log(colors.bold(colors.red('Rollup config file is not readable')));
     }
     try {
-        let htmlFile = fs.readFileSync(`${__dirname}/source/dist/index.html`).toString();
+        let htmlFile = fs.readFileSync(`${currentDir}/source/dist/index.html`).toString();
         htmlFile = htmlFile.replace(/\{fileName\}/g, fileName);
         fs.mkdirSync(`${root}/dist`);
         fs.writeFileSync(`${root}/dist/index.html`, htmlFile);
