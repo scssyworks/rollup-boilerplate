@@ -1,0 +1,29 @@
+{
+  "name": "rollup-app",
+  "version": "0.0.1",
+  "description": "Sample rollup app",
+  "main": "dist/js/index.js",
+  "module": "src/index.js",
+  "scripts": {
+    "start": "rollup -c --watch --environment SERVE:true",
+    "build": "npm run test && rollup -c",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-eslint": "^10.0.2",
+    "jest": "^24.8.0",
+    "rollup": "^1.18.0",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-eslint": "^7.0.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-livereload": "^1.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-serve": "^1.0.1",
+    "rollup-plugin-terser": "^5.1.1"
+  }
+}

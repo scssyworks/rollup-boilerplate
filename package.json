@@ -11,12 +11,29 @@
     "url": "git+https://github.com/scssyworks/rollup-boilerplate.git"
   },
   "keywords": [
-    "rollup"
+    "rollup",
+    "boilerplate",
+    "rollup-boilerplate",
+    "rollup boilterplate",
+    "starter",
+    "project builder",
+    "builder",
+    "app",
+    "plugins",
+    "umd",
+    "isomorphic"
   ],
   "author": "Sachin Singh <contactsachinsingh@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/scssyworks/rollup-boilerplate/issues"
   },
-  "homepage": "https://github.com/scssyworks/rollup-boilerplate#readme"
+  "homepage": "https://github.com/scssyworks/rollup-boilerplate#readme",
+  "dependencies": {
+    "fs-extra": "^8.1.0",
+    "inquirer": "^6.5.0"
+  },
+  "bin": {
+    "create-plugin": "./index.js"
+  }
 }
