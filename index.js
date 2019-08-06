@@ -7,6 +7,7 @@ const Spinner = require('cli-spinner').Spinner;
 const copySourceFiles = require('./utils/copySourceFiles');
 const root = process.cwd().replace(/[\\]/g, '/');
 const currentDir = __dirname.replace(/[\\]/g, '/');
+const npmProcess = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
 
 const existingFiles = fs.readdirSync(root);
 if (existingFiles.length) {
@@ -73,7 +74,7 @@ inquirer.prompt([
     const spinner = new Spinner('Installing dependencies... (%s)');
     spinner.setSpinnerString('|/-\\');
     spinner.start();
-    const status = childProcess.spawn('npm', ['install']);
+    const status = childProcess.spawn(npmProcess, ['install']);
 
     status.on('close', () => {
         spinner.stop(true);
