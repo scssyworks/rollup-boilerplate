@@ -1,11 +1,8 @@
 {
   "name": "rollup-boilerplate",
   "version": "0.0.1",
-  "description": "Rollup boilerplate lets you create projects based on rollup",
+  "description": "Rollup boilerplate is a project generator for UMD libraries",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/scssyworks/rollup-boilerplate.git"
