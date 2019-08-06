@@ -7,7 +7,7 @@
   "scripts": {
     "start": "rollup -c --watch --environment SERVE:true",
     "build": "npm run test && rollup -c",
-    "test": "jest"
+    "test": "jest plugin.test.js"
   },
   "author": "",
   "license": "UNLICENSED",

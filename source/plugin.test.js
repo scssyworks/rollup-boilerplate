@@ -1,3 +1,7 @@
+/**
+ * Place your jest test cases here
+ */
+
 import { out } from './src';
 
 test('Function out should print "Hello World!"', function () {
