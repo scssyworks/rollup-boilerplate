@@ -18,9 +18,11 @@ if (existingFiles.length) {
 copySourceFiles(`${currentDir}/source/json`, 'json');
 copySourceFiles(`${currentDir}/source/src`, 'src');
 copySourceFiles(`${currentDir}/source/.eslintrc`, '.eslintrc');
-copySourceFiles(`${currentDir}/source/.gitignore`, '.gitignore');
 copySourceFiles(`${currentDir}/source/babel.config.js`, 'babel.config.js');
 copySourceFiles(`${currentDir}/source/plugin.test.js`, 'plugin.test.js');
+
+// Generate gitignore file
+fs.writeFileSync(`${root}/.gitignore`, 'node_modules\n');
 
 // Copy package.json file
 inquirer.prompt([
