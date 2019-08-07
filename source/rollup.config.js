@@ -34,7 +34,12 @@ const defaultConfig = {
 
 if (process.env.SERVE) {
     defaultConfig.plugins.push(
-        serve('dist'),
+        serve({
+            open: true,
+            contentBase: ['dist'],
+            host: 'localhost',
+            port: '3030'
+        }),
         livereload({
             watch: 'dist',
             verbose: false
@@ -59,7 +64,9 @@ defaultConfig.plugins = [
     ...defaultConfig.plugins
 ];
 
-export default [
-    defaultConfig,
-    productionConfig
-]
+const configurations = [defaultConfig];
+if (!process.env.SERVE) {
+    configurations.push(productionConfig);
+}
+
+export default configurations;

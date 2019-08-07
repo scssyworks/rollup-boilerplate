@@ -3,8 +3,12 @@ const fs = require('fs-extra');
 const colors = require('colors');
 const inquirer = require('inquirer');
 const childProcess = require('child_process');
+const os = require('os');
+const argv = require('yargs').argv;
 const Spinner = require('cli-spinner').Spinner;
 const copySourceFiles = require('./utils/copySourceFiles');
+const extractName = require('./utils/extractName');
+const camelize = require('./utils/camelize');
 const root = process.cwd().replace(/[\\]/g, '/');
 const currentDir = __dirname.replace(/[\\]/g, '/');
 const npmProcess = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
@@ -25,24 +29,31 @@ copySourceFiles(`${currentDir}/source/plugin.test.js`, 'plugin.test.js');
 // Generate gitignore file
 fs.writeFileSync(`${root}/.gitignore`, 'node_modules\n');
 
+// Generate travis file
+fs.writeFileSync(`${root}/.travis.yml`, `language: node_js\nnode_js:\n- "stable"\nscript:\n- npm run test`);
+
+let projectName = argv.name;
+if (!projectName) {
+    projectName = extractName(root);
+}
+
+console.log(colors.bold(colors.green(`Creating project "${projectName}"...`)));
+
 // Copy package.json file
 inquirer.prompt([
     {
-        message: 'Plugin name:',
-        name: 'projectName',
-        type: 'input'
-    },
-    {
-        message: 'Output file name:',
+        message: 'Name of UMD output file',
         name: 'fileName',
-        type: 'input'
+        type: 'input',
+        default: camelize(projectName)
     },
     {
-        message: 'Author',
+        message: 'Author of library',
         name: 'author',
-        type: 'input'
+        type: 'input',
+        default: os.userInfo().username
     }
-]).then(({ projectName, fileName, author }) => {
+]).then(({ fileName, author }) => {
     // Read current content of package.json and rollup.config.js files
     const packageJson = fs.readFileSync(`${currentDir}/source/package.json`).toString();
     try {
@@ -76,11 +87,14 @@ inquirer.prompt([
     spinner.start();
     const status = childProcess.spawn(npmProcess, ['install']);
 
-    status.on('close', () => {
+    status.stdout.on('data', (data) => {
         spinner.stop(true);
-        console.log(colors.bold(colors.green('Dependencies installed!\n\n')));
-        console.log(colors.bold(colors.green('======= Commands =======\n')));
-        console.log(colors.green(`${colors.black('"npm run start"'.bold)} to start the server.\n`));
-        console.log(colors.green(`${colors.black('"npm run build"'.bold)} to generate build files.\n`));
+        console.log(`\n${data.toString()}`);
+    });
+
+    status.on('close', () => {
+        console.log(colors.bold(colors.green('\nDependencies installed!\n\n')));
+        console.log(colors.green(`Run ${colors.black('"npm run start"'.bold)} to start development server\n`));
+        console.log(colors.green(`and ${colors.black('"npm run build"'.bold)} to generate production build\n`));
     });
 });
