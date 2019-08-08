@@ -10,7 +10,7 @@ npm install -g rollup-boilerplate
 ```
 
 # How does it work?
-Rollup boilerplate installs a ``create-library`` utility which can be used to generate project files. To run the utility type:
+"Rollup boilerplate" installs a ``create-library`` utility which can be used to generate project files. To run the utility type:
 
 ```sh
 create-library --name testlibrary
