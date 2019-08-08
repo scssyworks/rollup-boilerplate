@@ -14,9 +14,22 @@ const currentDir = __dirname.replace(/[\\]/g, '/');
 const npmProcess = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
 
 const existingFiles = fs.readdirSync(root);
-if (existingFiles.length) {
+if (existingFiles.length > 1 && existingFiles[0] !== '.git') {
     console.log(colors.bold(colors.red('Workspace not empty!')));
     return;
+}
+
+// Get GIT parameters
+let gitUrl = '';
+try {
+    gitUrl = childProcess.execSync('git remote get-url origin').toString().trim();
+} catch (e) {
+    if (existingFiles.length === 1 && existingFiles[0] === '.git') {
+        console.log(colors.bold(colors.yellow('Git remote URL not found!')));
+    } else {
+        console.log(colors.bold(colors.yellow('No git repository found in workspace!')));
+    }
+    gitUrl = '';
 }
 
 // Copy source files
@@ -61,6 +74,17 @@ inquirer.prompt([
         packageJsonParsed.name = projectName;
         packageJsonParsed.author = author;
         packageJsonParsed.main = `dist/js/${fileName}`;
+        // Set git parameters
+        if (gitUrl) {
+            packageJsonParsed.repository = {
+                type: 'git',
+                url: `git+${gitUrl}`
+            };
+            packageJsonParsed.bugs = {
+                url: `${gitUrl.replace(/\.git$/, '')}/issues`
+            };
+            packageJsonParsed.homepage = `${gitUrl.replace(/\.git$/, '')}#readme`;
+        }
         // Write package.json file
         fs.writeFileSync(`${root}/package.json`, JSON.stringify(packageJsonParsed, null, 2));
     } catch (e) {
