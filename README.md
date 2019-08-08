@@ -1,7 +1,7 @@
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/scssyworks/rollup-boilerplate) ![GitHub](https://img.shields.io/github/license/scssyworks/rollup-boilerplate) [![Build Status](https://travis-ci.org/scssyworks/rollup-boilerplate.svg?branch=master)](https://travis-ci.org/scssyworks/rollup-boilerplate)
 
 # Rollup boilerplate
-Rollup boilerplate is a project generator for UMD libraries
+"Rollup boilerplate" is a project generator for UMD libraries
 
 # Install
 
@@ -10,20 +10,18 @@ npm install -g rollup-boilerplate
 ```
 
 # How does it work?
-Rollup boilerplate generates a project for writing UMD libraries in few simple steps:<br>
-
-Step 1: <b>Create library</b>
+Rollup boilerplate installs a ``create-library`` utility which can be used to generate project files. To run the utility type:
 
 ```sh
 create-library --name testlibrary
 ```
 
-This initiates a step by step wizard where you can enter details for the library.
+The generated code uses rollup as a bundler with Eslint and JEST integrated by default. You simply need to type ``npm start`` to start the development server, or ``npm run build`` to run production build.
 
-Step 2: <b>There is no step 2! </b><br>
+# Publishing library
 
-<b>Rollup boilerplate</b> generates a boilerplate based on rollup. It integrates Eslint and JEST for code quality checks. It also integrates a development server with livereload.<br>
+"Rollup boilerplate" generates ready to publish library code. Make sure the project name you choose is available on NPM.
 
-Use ``npm run start`` to start development server with livereload, and ``npm run build`` to generate production build files.
+Run ``npm version <major|minor|patch>`` to update the library version, and ``npm publish`` to publish the library.
 
-<b>Note:</b> This is not a major release. Hence, feel free to provide suggestions or raise PRs for further improvements.
+<b>Note:</b> This is not a major release. Feel free to provide suggestions or raise PRs for further improvements.
