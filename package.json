@@ -7,6 +7,9 @@
     "type": "git",
     "url": "git+https://github.com/scssyworks/rollup-boilerplate.git"
   },
+  "scripts": {
+    "test": "eslint ./index.js"
+  },
   "keywords": [
     "rollup",
     "boilerplate",
@@ -35,5 +38,8 @@
   },
   "bin": {
     "create-library": "./index.js"
+  },
+  "devDependencies": {
+    "eslint": "^6.1.0"
   }
 }

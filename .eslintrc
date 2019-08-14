@@ -1,0 +1,22 @@
+{
+    "env": {
+        "node": true,
+        "es6": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "no-alert": 2,
+        "no-eval": 2,
+        "no-loop-func": 2,
+        "camelcase": 2,
+        "no-bitwise": 2,
+        "no-lonely-if": 2,
+        "new-cap": 2,
+        "max-params": [
+            2,
+            {
+                "max": 5
+            }
+        ]
+    }
+}
