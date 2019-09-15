@@ -2,8 +2,4 @@
  * Place your jest test cases here
  */
 
-import { out } from './src';
-
-test('Function out should print "Hello World!"', function () {
-    expect(out()).toBe('Hello World!');
-});
+test.todo('Function out should print "Hello World"');
