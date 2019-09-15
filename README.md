@@ -1,27 +1,32 @@
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/scssyworks/rollup-boilerplate) ![GitHub](https://img.shields.io/github/license/scssyworks/rollup-boilerplate) [![Build Status](https://travis-ci.org/scssyworks/rollup-boilerplate.svg?branch=master)](https://travis-ci.org/scssyworks/rollup-boilerplate)
 
 # Rollup boilerplate
-"Rollup boilerplate" is a project generator for UMD libraries
+"Rollup boilerplate" is a UMD project generator suitable for creating modern JavaScript libraries. As the name suggests, rollup boilerplate uses uses ``Rollup`` bundler for generating output files. Rollup boilerplate is easy to use. Follow the steps below and you're all set.
 
 # Install
+
+You can install rollup boilerplate globally (preferred) or locally.
 
 ```sh
 npm install -g rollup-boilerplate
 ```
 
-# How does it work?
-"Rollup boilerplate" installs a ``create-library`` utility which can be used to generate project files. To run the utility type:
+# Commands
+"Rollup boilerplate" installs a ``create-library`` command for terminal. You can use this command to generate your specific project files. If you have installed ``rollup-boilerplate`` locally you need to use ``npx`` to run this command.
 
 ```sh
 create-library --name testlibrary
+npx create-library --name testlibrary
 ```
 
-The generated code uses rollup as a bundler with Eslint and JEST integrated by default. You simply need to type ``npm start`` to start the development server, or ``npm run build`` to run production build.
+Rollup boilerplate generates <b>ready to publish</b> boilerplate for library and automatically install all the required dependencies. It also includes an MIT license by default.<br>
+Rollup boilerplate supports ``JEST`` and ``eslint`` for unit testing and code quality checks. You can easily configure these tools according to your needs.<br>
+It also supports a server with live reload capability for testing your code in realtime.<br>
 
 # Publishing library
 
-"Rollup boilerplate" generates ready to publish library code. Make sure the project name you choose is available on NPM.
+You can publish your code as per latest ``npm`` <a href="https://docs.npmjs.com/cli/publish">guidelines</a> for publishing libraries.
 
-Run ``npm version <major|minor|patch>`` to update the library version, and ``npm publish`` to publish the library.
+# Contribution
 
-<b>Note:</b> This is not a major release. Feel free to provide suggestions or raise PRs for further improvements.
+Rollup boilerplate does not have a major release yet. We need your contribution to make it better. Please email at <a href="mailto:contactsachinsingh@gmail.com">contactsachinsingh@gmail.com</a> if you want to become a contributor.
