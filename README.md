@@ -19,9 +19,7 @@ create-library --name testlibrary
 npx create-library --name testlibrary
 ```
 
-Rollup boilerplate generates <b>ready to publish</b> boilerplate for library and automatically install all the required dependencies. It also includes an MIT license by default.<br>
-Rollup boilerplate supports ``JEST`` and ``eslint`` for unit testing and code quality checks. You can easily configure these tools according to your needs.<br>
-It also supports a server with live reload capability for testing your code in realtime.<br>
+Rollup boilerplate generates <b>ready to publish</b> boilerplate and automatically installs required dependencies. It also includes an MIT license by default.<br>
 
 # Publishing library
 
@@ -29,4 +27,4 @@ You can publish your code as per latest ``npm`` <a href="https://docs.npmjs.com/
 
 # Contribution
 
-Rollup boilerplate does not have a major release yet. We need your contribution to make it better. Please email at <a href="mailto:contactsachinsingh@gmail.com">contactsachinsingh@gmail.com</a> if you want to become a contributor.
+Rollup boilerplate does not have any major releases yet. We need your contribution to make it better. Please email at <a href="mailto:contactsachinsingh@gmail.com">contactsachinsingh@gmail.com</a> if you want to become a contributor.
