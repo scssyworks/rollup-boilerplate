@@ -4,19 +4,13 @@ const colors = require('colors');
 const inquirer = require('inquirer');
 const childProcess = require('child_process');
 const os = require('os');
-const argv = require('yargs').argv;
 const copySourceFiles = require('./utils/copySourceFiles');
 const extractName = require('./utils/extractName');
 const camelize = require('./utils/camelize');
 const root = process.cwd().replace(/[\\]/g, '/');
 const currentDir = __dirname.replace(/[\\]/g, '/');
 const npmProcess = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
-
-// Help
-if (argv.help) {
-    console.log(colors.bold(`\nUsage:\n${colors.green('create-library --name="libraryName"')}\n\nCreate library command opens up a wizard. Just enter the details and you are good to go!`));
-    return;
-}
+const argv = require('yargs').argv;
 
 const existingFiles = fs.readdirSync(root);
 if (existingFiles.length > 1 && existingFiles[0] !== '.git') {
