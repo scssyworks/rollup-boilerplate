@@ -1,6 +1,6 @@
 {
   "name": "rollup-boilerplate",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Rollup boilerplate is a project generator for UMD libraries",
   "main": "index.js",
   "repository": {
