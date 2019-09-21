@@ -107,9 +107,11 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
         try {
             const packageJsonParsed = JSON.parse(packageJson);
             packageJsonParsed.name = existingPkgJson.name || projectName;
+            packageJsonParsed.version = existingPkgJson.version || packageJsonParsed.version;
             packageJsonParsed.author = author;
             packageJsonParsed.keywords = keywords.split(',').map(keyword => keyword.trim());
             packageJsonParsed.main = `dist/js/${fileName}`;
+            existingPkgJson.license = packageJsonParsed.license = existingPkgJson.license || packageJsonParsed.license;
             // Set git parameters
             if (gitUrl) {
                 packageJsonParsed.repository = {
@@ -163,9 +165,14 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
             console.log(colors.bold(colors.red('HTML test file is not readable')));
         }
         try {
-            let licenseFile = fs.readFileSync(`${currentDir}/source/LICENSE`, 'utf8').toString();
-            licenseFile = licenseFile.replace('#currentYear#', (new Date()).getFullYear()).replace('#user#', author);
-            fs.writeFileSync(`${root}/LICENSE`, licenseFile);
+            if (
+                existingPkgJson.license === 'MIT'
+                && !existingFiles.includes('LICENSE')
+            ) {
+                let licenseFile = fs.readFileSync(`${currentDir}/source/LICENSE`, 'utf8').toString();
+                licenseFile = licenseFile.replace('#currentYear#', (new Date()).getFullYear()).replace('#user#', author);
+                fs.writeFileSync(`${root}/LICENSE`, licenseFile);
+            }
         } catch (e) {
             console.log(colors.bold(colors.red('LICENSE file is not readable')));
         }
