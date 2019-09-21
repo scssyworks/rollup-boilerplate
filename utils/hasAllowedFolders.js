@@ -1,6 +1,6 @@
 const toArray = require('./toArray');
 
-module.export = function (files = []) {
+module.exports = function (files = []) {
     const filesArray = toArray(files);
     return (
         [0, 1, 2].includes(filesArray.length)
