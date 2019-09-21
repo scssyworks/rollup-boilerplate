@@ -1,7 +1,7 @@
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/scssyworks/rollup-boilerplate) ![GitHub](https://img.shields.io/github/license/scssyworks/rollup-boilerplate) [![Build Status](https://travis-ci.org/scssyworks/rollup-boilerplate.svg?branch=master)](https://travis-ci.org/scssyworks/rollup-boilerplate)
 
 # Rollup boilerplate
-"Rollup boilerplate" is a UMD project generator suitable for creating modern JavaScript libraries. As the name suggests, rollup boilerplate uses uses ``Rollup`` bundler for generating output files. Rollup boilerplate is easy to use. Follow the steps below and you're all set.
+"Rollup boilerplate" is a UMD project generator suitable for creating modern JavaScript libraries. As the name suggests, rollup boilerplate uses ``Rollup`` bundler for generating output files. Rollup boilerplate is easy to use. Follow the steps below and you're all set.
 
 # Install
 

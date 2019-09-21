@@ -9,12 +9,12 @@ const extractName = require('./utils/extractName');
 const camelize = require('./utils/camelize');
 const root = process.cwd().replace(/[\\]/g, '/');
 const currentDir = __dirname.replace(/[\\]/g, '/');
-const npmProcess = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
+const npmProcess = `npm${/^win/.test(process.platform) ? '.cmd' : ''}`;
 const argv = require('yargs').argv;
 
 const existingFiles = fs.readdirSync(root);
 if (existingFiles.length > 1 && existingFiles[0] !== '.git') {
-    console.log(colors.bold(colors.red('Please make sure that your workspace is empty!')));
+    console.log(colors.bold(colors.red('Please make sure your current workspace is empty!')));
     return;
 }
 
@@ -23,9 +23,9 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
     let gitUrl = '';
     if (err) {
         if (existingFiles.length === 1 && existingFiles[0] === '.git') {
-            console.log(colors.bold(colors.yellow('Git remote URL not found!')));
+            console.log(colors.bold(colors.blue('[This project has a local GIT repository!] \nConsider adding it to remote using "git remote add origin <URL>"\n')));
         } else {
-            console.log(colors.bold(colors.yellow('No git repository found in workspace!')));
+            console.log(colors.bold(`${colors.yellow(`[This project does not have a GIT repository!]`)}\n${colors.blue(`Initialize git repository using "git init".\n`)}`));
         }
     } else {
         gitUrl = stdout.toString().trim();
@@ -38,7 +38,7 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
     copySourceFiles(`${currentDir}/source/plugin.test.js`, 'plugin.test.js');
 
     // Generate gitignore file
-    fs.writeFileSync(`${root}/.gitignore`, 'node_modules\n');
+    fs.writeFileSync(`${root}/.gitignore`, 'node_modules\n.vscode\n');
 
     // Generate travis file
     fs.writeFileSync(`${root}/.travis.yml`, `language: node_js\nnode_js:\n- "stable"\n`);
@@ -53,7 +53,7 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
     // Copy package.json file
     inquirer.prompt([
         {
-            message: 'Name of UMD output file',
+            message: 'Name of output file',
             name: 'fileName',
             type: 'input',
             default: camelize(projectName)
@@ -121,5 +121,9 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
         }
         // Run npm install
         childProcess.execSync(`${npmProcess} install`, { stdio: [0, 1, 2] });
+        console.clear();
+        console.log(colors.bold('Your project has been created successfully!'));
+        console.log(colors.bold('To start the DEV server type ' + colors.blue('npm start')));
+        console.log(colors.bold('To generate a production build type ' + colors.blue('npm run build')));
     });
 });
