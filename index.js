@@ -120,10 +120,12 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
             console.log(colors.bold(colors.red('LICENSE file is not readable')));
         }
         // Run npm install
+        console.clear();
+        console.log(colors.blue(colors.bold('Installing dependencies...')));
         childProcess.execSync(`${npmProcess} install`, { stdio: [0, 1, 2] });
         console.clear();
-        console.log(colors.bold('Your project has been created successfully!'));
-        console.log(colors.bold('To start the DEV server type ' + colors.blue('npm start')));
-        console.log(colors.bold('To generate a production build type ' + colors.blue('npm run build')));
+        console.log(colors.bold(colors.green('Your project has been created successfully!\n')));
+        console.log(colors.bold('To start the DEV server type ' + colors.blue('"npm start"')));
+        console.log(colors.bold('To generate a production build type ' + colors.blue('"npm run build"')));
     });
 });
