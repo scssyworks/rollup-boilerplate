@@ -18,7 +18,7 @@ const allowedFiles = [
 
 module.exports = function (files = [], allowedFilesList = []) {
     const filesArray = toArray(files);
-    const allowedFilesList = [...allowedFiles, ...allowedFilesList];
+    allowedFilesList = [...allowedFiles, ...allowedFilesList];
     const result = true;
     filesArray.forEach(file => {
         result = result && allowedFilesList.includes(file);
