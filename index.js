@@ -48,6 +48,8 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
         projectName = extractName(root);
     }
 
+    projectName = `${projectName}`.toLowerCase(); // Name of project in NPM should be a lower case
+
     console.log(colors.bold(colors.green(`Creating project "${projectName}"...`)));
 
     // Copy package.json file
@@ -126,6 +128,6 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
         console.clear();
         console.log(colors.bold(colors.green('Your project has been created successfully!\n')));
         console.log(colors.bold('To start the DEV server type ' + colors.blue('"npm start"')));
-        console.log(colors.bold('To generate a production build type ' + colors.blue('"npm run build"')));
+        console.log(colors.bold('To generate a production build type ' + colors.blue('"npm run build"\n')));
     });
 });
