@@ -108,6 +108,7 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
             const packageJsonParsed = JSON.parse(packageJson);
             packageJsonParsed.name = existingPkgJson.name || projectName;
             packageJsonParsed.version = existingPkgJson.version || packageJsonParsed.version;
+            packageJsonParsed.description = existingPkgJson.description || packageJsonParsed.description;
             packageJsonParsed.author = author;
             packageJsonParsed.keywords = keywords.split(',').map(keyword => keyword.trim());
             packageJsonParsed.main = `dist/js/${fileName}`;
