@@ -135,6 +135,13 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
                     (packageJsonParsed.devDependencies || {})
                 );
             }
+            if (existingPkgJson.peerDependencies) {
+                packageJsonParsed.peerDependencies = Object.assign(
+                    {},
+                    existingPkgJson.peerDependencies,
+                    (packageJsonParsed.peerDependencies || {})
+                );
+            }
             // Write package.json file
             fs.writeFileSync(`${root}/package.json`, JSON.stringify(packageJsonParsed, null, 2));
         } catch (e) {
