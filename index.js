@@ -11,11 +11,11 @@ const root = process.cwd().replace(/[\\]/g, '/');
 const currentDir = __dirname.replace(/[\\]/g, '/');
 const npmProcess = `npm${/^win/.test(process.platform) ? '.cmd' : ''}`;
 const argv = require('yargs').argv;
-const hasAllowedFolders = require('./utils/hasAllowedFolders');
+const hasAllowedItems = require('./utils/hasAllowedItems');
 const hasGitFolder = require('./utils/hasGitFolder');
 
 const existingFiles = fs.readdirSync(root);
-if (!hasAllowedFolders(existingFiles)) {
+if (!hasAllowedItems(existingFiles)) {
     console.log(colors.bold(colors.red('Please make sure your current workspace is empty!')));
     return;
 }
