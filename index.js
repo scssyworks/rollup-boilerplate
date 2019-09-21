@@ -11,9 +11,11 @@ const root = process.cwd().replace(/[\\]/g, '/');
 const currentDir = __dirname.replace(/[\\]/g, '/');
 const npmProcess = `npm${/^win/.test(process.platform) ? '.cmd' : ''}`;
 const argv = require('yargs').argv;
+const hasAllowedFolders = require('./utils/hasAllowedFolders');
+const hasGitFolder = require('./utils/hasGitFolder');
 
 const existingFiles = fs.readdirSync(root);
-if (existingFiles.length > 1 && existingFiles[0] !== '.git') {
+if (!hasAllowedFolders(existingFiles)) {
     console.log(colors.bold(colors.red('Please make sure your current workspace is empty!')));
     return;
 }
@@ -22,7 +24,7 @@ if (existingFiles.length > 1 && existingFiles[0] !== '.git') {
 childProcess.exec('git remote get-url origin', (err, stdout) => {
     let gitUrl = '';
     if (err) {
-        if (existingFiles.length === 1 && existingFiles[0] === '.git') {
+        if (hasGitFolder(existingFiles)) {
             console.log(colors.bold(colors.blue('[This project has a local GIT repository!] \nConsider adding it to remote using "git remote add origin <URL>"\n')));
         } else {
             console.log(colors.bold(`${colors.yellow(`[This project does not have a GIT repository!]`)}\n${colors.blue(`Initialize git repository using "git init".\n`)}`));
