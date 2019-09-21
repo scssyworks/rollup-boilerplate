@@ -15,7 +15,18 @@ const hasAllowedItems = require('./utils/hasAllowedItems');
 const hasGitFolder = require('./utils/hasGitFolder');
 
 const existingFiles = fs.readdirSync(root);
-if (!hasAllowedItems(existingFiles)) {
+let allowedFilesImportText = '';
+let allowedFiles = [];
+if (
+    existingFiles.includes(allowedFilesImportText = 'allowedFiles.json')
+    || existingFiles.includes(allowedFilesImportText = 'allowedFiles.js')
+) {
+    allowedFiles = require(`${root}/${allowedFilesImportText}`);
+    if (!Array.isArray(allowedFiles)) {
+        allowedFiles = [];
+    }
+}
+if (!hasAllowedItems(existingFiles, allowedFiles)) {
     console.log(colors.bold(colors.red('Please make sure your current workspace is empty!')));
     return;
 }
@@ -35,15 +46,23 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
     // Copy source files
     copySourceFiles(`${currentDir}/source/json`, 'json');
     copySourceFiles(`${currentDir}/source/src`, 'src');
-    copySourceFiles(`${currentDir}/source/.eslintrc`, '.eslintrc');
-    copySourceFiles(`${currentDir}/source/babel.config.js`, 'babel.config.js');
+    if (!existingFiles.includes('.eslintrc')) {
+        copySourceFiles(`${currentDir}/source/.eslintrc`, '.eslintrc');
+    }
+    if (!existingFiles.includes('babel.config.js')) {
+        copySourceFiles(`${currentDir}/source/babel.config.js`, 'babel.config.js');
+    }
     copySourceFiles(`${currentDir}/source/plugin.test.js`, 'plugin.test.js');
 
     // Generate gitignore file
-    fs.writeFileSync(`${root}/.gitignore`, 'node_modules\n.vscode\n');
+    if (!existingFiles.includes('.gitignore')) {
+        fs.writeFileSync(`${root}/.gitignore`, 'node_modules\n.vscode\n');
+    }
 
     // Generate travis file
-    fs.writeFileSync(`${root}/.travis.yml`, `language: node_js\nnode_js:\n- "stable"\n`);
+    if (!existingFiles.includes('.travis.yml')) {
+        fs.writeFileSync(`${root}/.travis.yml`, `language: node_js\nnode_js:\n- "stable"\n`);
+    }
 
     let projectName = argv.name;
     if (!projectName) {
@@ -53,6 +72,11 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
     projectName = `${projectName}`.toLowerCase(); // Name of project in NPM should be a lower case
 
     console.log(colors.bold(colors.green(`Creating project "${projectName}"...`)));
+
+    let existingPkgJson = {};
+    if (existingFiles.includes('package.json')) {
+        existingPkgJson = require(`${root}/package.json`);
+    }
 
     // Copy package.json file
     inquirer.prompt([
@@ -66,12 +90,13 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
             message: 'Name of the author',
             name: 'author',
             type: 'input',
-            default: os.userInfo().username
+            default: (existingPkgJson.author || os.userInfo().username)
         },
         {
             message: 'Keywords (comma separated)',
             name: 'keywords',
-            type: 'input'
+            type: 'input',
+            default: ((existingPkgJson.keywords && existingPkgJson.keywords.join(',')) || camelize(projectName))
         }
     ]).then(({ fileName, author, keywords }) => {
         // Read current content of package.json and rollup.config.js files
@@ -81,7 +106,7 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
         }
         try {
             const packageJsonParsed = JSON.parse(packageJson);
-            packageJsonParsed.name = projectName;
+            packageJsonParsed.name = existingPkgJson.name || projectName;
             packageJsonParsed.author = author;
             packageJsonParsed.keywords = keywords.split(',').map(keyword => keyword.trim());
             packageJsonParsed.main = `dist/js/${fileName}`;
@@ -95,6 +120,20 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
                     url: `${gitUrl.replace(/\.git$/, '')}/issues`
                 };
                 packageJsonParsed.homepage = `${gitUrl.replace(/\.git$/, '')}#readme`;
+            }
+            if (existingPkgJson.dependencies) {
+                packageJsonParsed.dependencies = Object.assign(
+                    {},
+                    existingPkgJson.dependencies,
+                    (packageJsonParsed.dependencies || {})
+                );
+            }
+            if (existingPkgJson.devDependencies) {
+                packageJsonParsed.devDependencies = Object.assign(
+                    {},
+                    existingPkgJson.devDependencies,
+                    (packageJsonParsed.devDependencies || {})
+                );
             }
             // Write package.json file
             fs.writeFileSync(`${root}/package.json`, JSON.stringify(packageJsonParsed, null, 2));

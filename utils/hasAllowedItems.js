@@ -1,14 +1,33 @@
 const toArray = require('./toArray');
+const allowedFiles = [
+    '.git',
+    'node_modules',
+    'package.json',
+    'package-lock.json',
+    '.gitignore',
+    '.gitadd',
+    '.eslintrc',
+    '.eslintignore',
+    '.babelrc',
+    'babel.config.js',
+    'allowedFiles.json',
+    'allowedFiles.js',
+    '.vscode',
+    '.travis.yml'
+];
 
-module.exports = function (files = []) {
+module.exports = function (files = [], allowedFilesList = []) {
     const filesArray = toArray(files);
+    const allowedFilesList = [...allowedFiles, ...allowedFilesList];
+    const result = true;
+    filesArray.forEach(file => {
+        result = result && allowedFilesList.includes(file);
+    });
     return (
-        [0, 1, 2, 3, 4].includes(filesArray.length)
-        && (
-            filesArray.includes('.git')
-            || filesArray.includes('node_modules')
-            || filesArray.includes('package.json')
-            || filesArray.includes('package-lock.json')
+        (
+            filesArray.length >= 0
+            && filesArray.length <= allowedFilesList.length
         )
+        && result
     );
 }
