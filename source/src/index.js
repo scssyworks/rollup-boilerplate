@@ -1,6 +1,4 @@
-// Sample source JavaScript file
-import ob from '../json/sampleJson.json';
-
-export function out() {
-    return ob.key;
+export function sayHello() {
+    const helloWorldMsg = 'Hello World!';
+    console.log(helloWorldMsg);
 }
