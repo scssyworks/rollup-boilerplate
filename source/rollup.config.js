@@ -75,7 +75,7 @@ if (process.env.SERVE) {
         }),
         ...umdConfig.plugins
     ];
-    umdConfig.plugins.push(
+    esmConfig.plugins.push(
         serve({
             open: true,
             contentBase: ['dist'],
