@@ -55,6 +55,16 @@ umdConfig.plugins = [
 
 // Server mode
 if (process.env.SERVE) {
+    esmConfig.plugins = [
+        eslint({
+            exclude: [
+                'node_modules/**',
+                'json/**'
+            ],
+            throwOnError: true
+        }),
+        ...esmConfig.plugins
+    ];
     umdConfig.plugins = [
         eslint({
             exclude: [
@@ -92,7 +102,7 @@ umdProdConfig.plugins = [
 
 let configurations = [];
 if (process.env.SERVE) {
-    configurations.push(umdConfig);
+    configurations.push(esmConfig, umdConfig);
 } else {
     configurations.push(
         esmConfig,
