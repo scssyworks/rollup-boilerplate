@@ -4,9 +4,6 @@
   "description": "Sample rollup app",
   "main": "dist/umd/{fileName}.js",
   "module": "dist/esm/{fileName}.esm.js",
-  "files": [
-    "dist/"
-  ],
   "scripts": {
     "start": "rollup -c --watch --environment SERVE:true",
     "build": "npm run test && rollup -c",

@@ -112,6 +112,7 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
             packageJsonParsed.keywords = keywords.split(',').map(keyword => keyword.trim());
             packageJsonParsed.main = `dist/umd/${fileName}.js`;
             packageJsonParsed.module = `dist/umd/${fileName}.esm.js`;
+            packageJsonParsed.files = ['dist/'];
             existingPkgJson.license = packageJsonParsed.license = existingPkgJson.license || packageJsonParsed.license;
             // Set git parameters
             if (gitUrl) {
