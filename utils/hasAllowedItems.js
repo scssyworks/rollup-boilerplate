@@ -15,7 +15,8 @@ const allowedFiles = [
     '.vscode',
     '.travis.yml',
     'LICENSE',
-    'LICENSE.txt'
+    'LICENSE.txt',
+    'README.md'
 ];
 
 module.exports = function (files = [], allowedFilesList = []) {
