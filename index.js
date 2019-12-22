@@ -80,24 +80,30 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
     // Copy package.json file
     inquirer.prompt([
         {
-            message: 'Name of output file',
+            message: 'Output file name (default is folder name)',
             name: 'fileName',
             type: 'input',
             default: camelize(projectName)
         },
         {
-            message: 'Name of the author',
+            message: 'Project description',
+            name: 'projectDescription',
+            type: 'input',
+            default: 'Rollup project'
+        },
+        {
+            message: 'Name of the author (to be used in package.json and LICENSE)',
             name: 'author',
             type: 'input',
             default: (existingPkgJson.author || os.userInfo().username)
         },
         {
-            message: 'Keywords (comma separated)',
+            message: 'Keywords (separated by comma)',
             name: 'keywords',
             type: 'input',
             default: ((existingPkgJson.keywords && existingPkgJson.keywords.join(',')) || camelize(projectName))
         }
-    ]).then(({ fileName, author, keywords }) => {
+    ]).then(({ fileName, projectDescription, author, keywords }) => {
         // Read current content of package.json and rollup.config.js files
         const packageJson = fs.readFileSync(`${currentDir}/source/package.json`).toString();
         if (!keywords) {
@@ -107,7 +113,7 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
             const packageJsonParsed = JSON.parse(packageJson);
             packageJsonParsed.name = existingPkgJson.name || projectName;
             packageJsonParsed.version = existingPkgJson.version || packageJsonParsed.version;
-            packageJsonParsed.description = existingPkgJson.description || packageJsonParsed.description;
+            packageJsonParsed.description = projectDescription;
             packageJsonParsed.author = author;
             packageJsonParsed.keywords = keywords.split(',').map(keyword => keyword.trim());
             packageJsonParsed.main = `dist/umd/${fileName}.js`;
