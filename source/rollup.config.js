@@ -64,37 +64,36 @@ umdProdConfig.plugins = [
     terser()
 ];
 
-const serveConfig = Object.assign({}, commonConfig);
-serveConfig.input = 'render/index.js';
-serveConfig.output = Object.assign({}, commonConfig.output, {
-    file: 'dist/render/{fileName}.iife.js',
-    format: 'iife'
-});
-serveConfig.plugins = [
-    eslint({
-        exclude: [
-            'node_modules/**',
-            'json/**'
-        ],
-        throwOnError: true
-    }),
-    ...umdConfig.plugins
-];
-serveConfig.plugins.push(
-    serve({
-        open: true,
-        contentBase: ['dist'],
-        host: 'localhost',
-        port: '3030'
-    }),
-    livereload({
-        watch: 'dist',
-        verbose: false
-    })
-);
-
 let configurations = [];
 if (process.env.SERVE) {
+    const serveConfig = Object.assign({}, commonConfig);
+    serveConfig.input = 'render/index.js';
+    serveConfig.output = Object.assign({}, commonConfig.output, {
+        file: 'dist/render/{fileName}.iife.js',
+        format: 'iife'
+    });
+    serveConfig.plugins = [
+        eslint({
+            exclude: [
+                'node_modules/**',
+                'json/**'
+            ],
+            throwOnError: true
+        }),
+        ...umdConfig.plugins
+    ];
+    serveConfig.plugins.push(
+        serve({
+            open: true,
+            contentBase: ['dist'],
+            host: 'localhost',
+            port: '3030'
+        }),
+        livereload({
+            watch: 'dist',
+            verbose: false
+        })
+    );
     configurations.push(serveConfig);
 } else {
     configurations.push(
