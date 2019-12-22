@@ -27,4 +27,4 @@ You can publish your code as per latest ``npm`` <a href="https://docs.npmjs.com/
 
 # Contribution
 
-Rollup boilerplate does not have any major releases yet. We need your contribution to make it better. Please contact me if you wish to become a contributor.
+Rollup boilerplate does not have any major releases yet. I need your contribution to make it better. Please contact me if you wish to become a contributor.
