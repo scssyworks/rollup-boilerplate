@@ -46,6 +46,7 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
 
     inquirer.prompt([{
         type: 'list',
+        message: 'Select a project type',
         choices: [
             'CoreJS',
             'React'
@@ -82,13 +83,12 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
 
         projectName = `${projectName}`.toLowerCase(); // Name of project in NPM should be a lower case
 
-        console.log(colors.bold(colors.green(`Writing source files for project "${projectName}"...`)));
-
         let existingPkgJson = {};
         if (existingFiles.includes('package.json')) {
             existingPkgJson = require(`${root}/package.json`);
         }
 
+        console.clear();
         // Copy package.json file
         inquirer.prompt([
             {
