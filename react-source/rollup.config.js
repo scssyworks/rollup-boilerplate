@@ -1,5 +1,6 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
+import replace from '@rollup/plugin-replace';
 import babel from "rollup-plugin-babel";
 import { terser } from "rollup-plugin-terser";
 import { eslint } from 'rollup-plugin-eslint';
@@ -18,7 +19,13 @@ const commonConfig = {
                 moduleDirectory: 'node_modules'
             }
         }),
-        commonjs()
+        commonjs({
+            include: /node_modules/,
+            namedExports: {
+                'node_modules/react/index.js': ['Children', 'Component', 'PureComponent', 'PropTypes', 'createElement'],
+                'node_modules/react-dom/index.js': ['render']
+            }
+        })
     ]
 };
 
@@ -28,6 +35,19 @@ esmConfig.output = Object.assign({}, commonConfig.output, {
     file: 'dist/esm/{fileName}.esm.js',
     format: 'esm'
 });
+esmConfig.plugins = [
+    ...commonConfig.plugins,
+    replace({
+        'process.env.NODE_ENV': JSON.stringify('development')
+    }),
+    babel({
+        exclude: 'node_modules/**',
+        babelrc: false,
+        presets: [
+            '@babel/preset-react'
+        ]
+    })
+];
 
 // ESM prod config
 const esmProdConfig = Object.assign({}, esmConfig);
@@ -36,7 +56,17 @@ esmProdConfig.output = Object.assign({}, esmConfig.output, {
     sourcemap: false
 });
 esmProdConfig.plugins = [
-    ...esmConfig.plugins,
+    ...commonConfig.plugins,
+    replace({
+        'process.env.NODE_ENV': JSON.stringify('production')
+    }),
+    babel({
+        exclude: 'node_modules/**',
+        babelrc: false,
+        presets: [
+            '@babel/preset-react'
+        ]
+    }),
     terser()
 ];
 
@@ -48,6 +78,9 @@ umdConfig.output = Object.assign({}, commonConfig.output, {
 });
 umdConfig.plugins = [
     ...commonConfig.plugins,
+    replace({
+        'process.env.NODE_ENV': JSON.stringify('development')
+    }),
     babel({
         exclude: 'node_modules/**'
     })
@@ -60,7 +93,13 @@ umdProdConfig.output = Object.assign({}, umdConfig.output, {
     sourcemap: false
 });
 umdProdConfig.plugins = [
-    ...umdConfig.plugins,
+    ...commonConfig.plugins,
+    replace({
+        'process.env.NODE_ENV': JSON.stringify('production')
+    }),
+    babel({
+        exclude: 'node_modules/**'
+    }),
     terser()
 ];
 
