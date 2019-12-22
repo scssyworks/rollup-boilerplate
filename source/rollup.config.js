@@ -1,5 +1,5 @@
-import resolve from "rollup-plugin-node-resolve";
-import commonjs from "rollup-plugin-commonjs";
+import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
 import babel from "rollup-plugin-babel";
 import { terser } from "rollup-plugin-terser";
 import { eslint } from 'rollup-plugin-eslint';
@@ -53,42 +53,6 @@ umdConfig.plugins = [
     })
 ];
 
-// Server mode
-if (process.env.SERVE) {
-    esmConfig.plugins = [
-        eslint({
-            exclude: [
-                'node_modules/**',
-                'json/**'
-            ],
-            throwOnError: true
-        }),
-        ...esmConfig.plugins
-    ];
-    umdConfig.plugins = [
-        eslint({
-            exclude: [
-                'node_modules/**',
-                'json/**'
-            ],
-            throwOnError: true
-        }),
-        ...umdConfig.plugins
-    ];
-    esmConfig.plugins.push(
-        serve({
-            open: true,
-            contentBase: ['dist'],
-            host: 'localhost',
-            port: '3030'
-        }),
-        livereload({
-            watch: 'dist',
-            verbose: false
-        })
-    );
-}
-
 // Production config
 const umdProdConfig = Object.assign({}, umdConfig);
 umdProdConfig.output = Object.assign({}, umdConfig.output, {
@@ -100,9 +64,38 @@ umdProdConfig.plugins = [
     terser()
 ];
 
+const serveConfig = Object.assign({}, commonConfig);
+serveConfig.input = 'render/index.js';
+serveConfig.output = Object.assign({}, commonConfig.output, {
+    file: 'dist/render/{fileName}.iife.js',
+    format: 'iife'
+});
+serveConfig.plugins = [
+    eslint({
+        exclude: [
+            'node_modules/**',
+            'json/**'
+        ],
+        throwOnError: true
+    }),
+    ...umdConfig.plugins
+];
+serveConfig.plugins.push(
+    serve({
+        open: true,
+        contentBase: ['dist'],
+        host: 'localhost',
+        port: '3030'
+    }),
+    livereload({
+        watch: 'dist',
+        verbose: false
+    })
+);
+
 let configurations = [];
 if (process.env.SERVE) {
-    configurations.push(esmConfig, umdConfig);
+    configurations.push(serveConfig);
 } else {
     configurations.push(
         esmConfig,

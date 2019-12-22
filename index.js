@@ -45,6 +45,7 @@ childProcess.exec('git remote get-url origin', (err, stdout) => {
     }
     // Copy source files
     copySourceFiles(`${currentDir}/source/src`, 'src');
+    copySourceFiles(`${currentDir}/source/render`, 'render');
     if (!existingFiles.includes('.eslintrc')) {
         copySourceFiles(`${currentDir}/source/.eslintrc`, '.eslintrc');
     }

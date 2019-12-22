@@ -1,4 +1,3 @@
-export function sayHello() {
-    const helloWorldMsg = 'Hello World!';
-    console.log(helloWorldMsg);
+export function out() {
+    return 'Hello World!';
 }
