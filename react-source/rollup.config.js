@@ -38,7 +38,7 @@ esmConfig.output = Object.assign({}, commonConfig.output, {
 esmConfig.plugins = [
     ...commonConfig.plugins,
     replace({
-        'process.env.NODE_ENV': JSON.stringify('development')
+        'process.env.NODE_ENV': JSON.stringify('production')
     }),
     babel({
         exclude: 'node_modules/**',
@@ -79,7 +79,7 @@ umdConfig.output = Object.assign({}, commonConfig.output, {
 umdConfig.plugins = [
     ...commonConfig.plugins,
     replace({
-        'process.env.NODE_ENV': JSON.stringify('development')
+        'process.env.NODE_ENV': JSON.stringify('production')
     }),
     babel({
         exclude: 'node_modules/**'
@@ -119,9 +119,15 @@ if (process.env.SERVE) {
             ],
             throwOnError: true
         }),
-        ...umdConfig.plugins
+        ...commonConfig.plugins
     ];
     serveConfig.plugins.push(
+        replace({
+            'process.env.NODE_ENV': JSON.stringify('development')
+        }),
+        babel({
+            exclude: 'node_modules/**'
+        }),
         serve({
             open: true,
             contentBase: ['dist'],
