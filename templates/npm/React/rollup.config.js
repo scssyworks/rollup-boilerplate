@@ -6,6 +6,8 @@ import { terser } from "rollup-plugin-terser";
 import { eslint } from 'rollup-plugin-eslint';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
+import * as reactImports from 'react';
+import * as reactDomImports from 'react-dom';
 
 const commonConfig = {
     input: 'src/index.js',
@@ -22,8 +24,8 @@ const commonConfig = {
         commonjs({
             include: /node_modules/,
             namedExports: {
-                'node_modules/react/index.js': ['Children', 'Component', 'PureComponent', 'PropTypes', 'createElement'],
-                'node_modules/react-dom/index.js': ['render']
+                'node_modules/react/index.js': Object.keys(reactImports),
+                'node_modules/react-dom/index.js': Object.keys(reactDomImports)
             }
         }),
         replace({
