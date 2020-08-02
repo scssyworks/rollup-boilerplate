@@ -1,6 +1,6 @@
 {
   "name": "rollup-app",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Sample rollup app",
   "main": "dist/umd/{fileName}.js",
   "module": "dist/esm/{fileName}.esm.js",
