@@ -1,30 +1,31 @@
-![GitHub package.json version](https://img.shields.io/github/package-json/v/scssyworks/rollup-boilerplate) ![GitHub](https://img.shields.io/github/license/scssyworks/rollup-boilerplate) [![Build Status](https://travis-ci.org/scssyworks/rollup-boilerplate.svg?branch=master)](https://travis-ci.org/scssyworks/rollup-boilerplate)
-
 # Rollup boilerplate
-"Rollup boilerplate" is a UMD + ESM project generator suitable for modern JavaScript libraries.
+"Rollup boilerplate" is a UMD + MJS (ESM) project generator suitable for modern JavaScript libraries.
 
 # Installation
-
-You can install rollup boilerplate globally (preferred) or locally.
 
 ```sh
 npm install -g rollup-boilerplate
 ```
 
-# Commands
-To create a rollup project type ``create-library`` command on your local terminal. To get started right away this command generate files and install dependencies automatically. 
+# How does it work?
+
+1. Create a library folder
 
 ```sh
-create-library --name testlibrary
-npx create-library --name testlibrary
+$ mkdir myLibrary
+$ cd myLibrary
 ```
 
-Rollup boilerplate also includes an MIT license.<br>
+2. Run ``create-library`` command. (For more information run ``create-library --help``).
 
-# Publishing library
+```sh
+$ create-library
+```
 
-You can publish your code as per latest ``npm`` <a href="https://docs.npmjs.com/cli/publish">guidelines</a>.
+3. Provide the relevant details for you library and you're all set!
+
+Rollup-boilerplate does everything for you: From setting up project files to installing dependencies.
 
 # Contribution
 
-Rollup boilerplate does not have any major releases yet. I need your contribution to make it better. Please contact me if you wish to become a contributor.
+Rollup-boilerplate is an open-source tool. Any ideas for improvements or new features are always welcome.
