@@ -18,24 +18,25 @@ const commonConfig = {
                 moduleDirectory: 'node_modules'
             }
         }),
-        commonjs(),
         babel({
-            exclude: 'node_modules/**'
-        })
+            exclude: 'node_modules/**',
+            babelHelpers: 'runtime'
+        }),
+        commonjs()
     ]
 };
 
 // ESM config
 const esmConfig = Object.assign({}, commonConfig);
 esmConfig.output = Object.assign({}, commonConfig.output, {
-    file: 'dist/esm/{fileName}.esm.js',
+    file: 'dist/mjs/{fileName}.mjs',
     format: 'esm'
 });
 
 // ESM prod config
 const esmProdConfig = Object.assign({}, esmConfig);
 esmProdConfig.output = Object.assign({}, esmConfig.output, {
-    file: 'dist/esm/{fileName}.esm.min.js',
+    file: 'dist/mjs/{fileName}.min.mjs',
     sourcemap: false
 });
 esmProdConfig.plugins = [

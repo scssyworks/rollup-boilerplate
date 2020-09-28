@@ -1,16 +1,13 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import replace from '@rollup/plugin-replace';
 import babel from "@rollup/plugin-babel";
 import { terser } from "rollup-plugin-terser";
 import { eslint } from 'rollup-plugin-eslint';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
-import * as reactImports from 'react';
-import * as reactDomImports from 'react-dom';
 
 const commonConfig = {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     output: {
         name: '{fileName}',
         sourcemap: true
@@ -21,18 +18,13 @@ const commonConfig = {
                 moduleDirectory: 'node_modules'
             }
         }),
-        commonjs({
-            include: /node_modules/,
-            namedExports: {
-                'node_modules/react/index.js': Object.keys(reactImports),
-                'node_modules/react-dom/index.js': Object.keys(reactDomImports)
-            }
-        }),
-        replace({
-            'process.env.NODE_ENV': JSON.stringify('production')
-        }),
         babel({
-            exclude: 'node_modules/**'
+            exclude: 'node_modules/**',
+            extensions: ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts'],
+            babelHelpers: 'runtime'
+        }),
+        commonjs({
+            extensions: ['.js', '.ts']
         })
     ]
 };
@@ -40,21 +32,18 @@ const commonConfig = {
 // ESM config
 const esmConfig = Object.assign({}, commonConfig);
 esmConfig.output = Object.assign({}, commonConfig.output, {
-    file: 'dist/esm/{fileName}.esm.js',
+    file: 'dist/mjs/{fileName}.mjs',
     format: 'esm'
 });
-esmConfig.plugins = [
-    ...commonConfig.plugins
-];
 
 // ESM prod config
 const esmProdConfig = Object.assign({}, esmConfig);
 esmProdConfig.output = Object.assign({}, esmConfig.output, {
-    file: 'dist/esm/{fileName}.esm.min.js',
+    file: 'dist/mjs/{fileName}.min.mjs',
     sourcemap: false
 });
 esmProdConfig.plugins = [
-    ...commonConfig.plugins,
+    ...esmConfig.plugins,
     terser()
 ];
 
@@ -75,14 +64,14 @@ umdProdConfig.output = Object.assign({}, umdConfig.output, {
     sourcemap: false
 });
 umdProdConfig.plugins = [
-    ...commonConfig.plugins,
+    ...umdConfig.plugins,
     terser()
 ];
 
 let configurations = [];
 if (process.env.SERVE) {
     const serveConfig = Object.assign({}, commonConfig);
-    serveConfig.input = 'render/index.js';
+    serveConfig.input = 'render/index.ts';
     serveConfig.output = Object.assign({}, commonConfig.output, {
         file: 'dist/render/{fileName}.iife.js',
         format: 'iife'
@@ -95,7 +84,7 @@ if (process.env.SERVE) {
             ],
             throwOnError: true
         }),
-        ...commonConfig.plugins
+        ...umdConfig.plugins
     ];
     serveConfig.plugins.push(
         serve({

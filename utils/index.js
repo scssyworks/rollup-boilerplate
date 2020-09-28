@@ -1,4 +1,3 @@
-const fs = require('fs-extra');
 const allowedFiles = [
     '.git',
     '.vscode',
@@ -9,8 +8,11 @@ const allowedFiles = [
     '.gitignore',
     '.gitadd',
     '.eslintrc',
+    '.eslintrc.json',
+    '.eslint.config.js',
     '.eslintignore',
     '.babelrc',
+    '.babelrc.json',
     'babel.config.js',
     'allowedFiles.json',
     'allowedFiles.js',
@@ -21,11 +23,25 @@ const allowedFiles = [
     'README.md'
 ];
 
+function arrayMerge(targetArray, newArray) {
+    if (!Array.isArray(targetArray)) {
+        targetArray = [];
+    } else {
+        targetArray = [...targetArray];
+    }
+    if (Array.isArray(newArray)) {
+        for (const item of newArray) {
+            if (!targetArray.includes(item)) {
+                targetArray.push(item);
+            }
+        }
+    }
+    return targetArray;
+}
+
 function sanitizeUrl(url = '') {
     return url.replace(/[\\]/g, '/');
 }
-
-const root = sanitizeUrl(process.cwd());
 
 function hasAllowedItems(files = [], allowedFilesList = []) {
     const filesArray = [...files];
@@ -53,10 +69,6 @@ function camelize(str) {
     return;
 }
 
-function copySourceFiles(sourcePath, distFolder = '') {
-    fs.copySync(sourcePath, `${root}/${distFolder}`);
-}
-
 function extractName(root) {
     if (typeof root === 'string') {
         // Trim '/' from end
@@ -72,9 +84,16 @@ function extractName(root) {
     return;
 }
 
-function hasGitFolder(files = []) {
-    const filesArray = [...files];
-    return filesArray.includes('.git');
+function hasOwn(obj, key) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-module.exports = { hasAllowedItems, camelize, copySourceFiles, extractName, hasGitFolder, sanitizeUrl };
+module.exports = {
+    hasAllowedItems,
+    camelize,
+    extractName,
+    sanitizeUrl,
+    arrayMerge,
+    hasOwn,
+    defaultAllowedFiles: allowedFiles
+};
