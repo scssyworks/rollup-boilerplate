@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const colors = require('colors');
+const { root } = require('./tArgs');
 
 module.exports = function (existingFiles = []) {
     let targetFiles = [];

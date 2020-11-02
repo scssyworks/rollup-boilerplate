@@ -8,7 +8,6 @@ const {
     extractName,
     camelize,
     hasAllowedItems,
-    sanitizeUrl,
     arrayMerge,
     defaultAllowedFiles
 } = require('./utils');
@@ -26,28 +25,7 @@ const getIndexHtml = require('./utils/getIndexHtml');
 const copyRollupConfig = require('./utils/copyRollupConfig');
 const backupExistingFiles = require('./utils/backupExistingFiles');
 const generateEslintrc = require('./utils/generateEslintrc');
-const argv = require('yargs')
-    .option('version', {
-        alias: 'v',
-        type: 'boolean',
-        description: 'Current build version'
-    })
-    .option('name', {
-        alias: 'n',
-        type: 'string',
-        description: 'Name of library project'
-    })
-    .option('logs', {
-        alias: 'l',
-        type: 'boolean',
-        description: 'Generate error logs'
-    })
-    .option('no-install', {
-        alias: 'x',
-        type: 'boolean',
-        description: 'Skip "npm install" [upcoming feature]'
-    }).argv;
-
+const { argv, root } = require('./utils/tArgs');
 
 const installEvent = new EventEmitter();
 installEvent.on('inst', (projectType) => {
@@ -62,15 +40,20 @@ installEvent.on('inst', (projectType) => {
 });
 
 handleError(async () => {
+    const createSubfolder = typeof argv.name === 'string';
     // If version is asked, then do nothing and return the current version
     if (argv.version) {
         console.log(require('./package.json').version);
         return;
     }
     if (argv['no-install']) {
-        console.log(colors.yellow('[Info]: Skip npm install feature will be available in upcoming version.'));
+        console.log(colors.yellow('[Info]: Skip npm install feature will be available in upcoming versions.'));
     }
-    const root = sanitizeUrl(process.cwd());
+    // check if root folder exists. If not then create the directory and sub-directory
+    if (!fs.existsSync(root)) {
+        console.log(root);
+        fs.mkdirsSync(root);
+    }
     const existingFiles = fs.readdirSync(root);
     // read existing package.json file
     let packageJson = {};
@@ -84,7 +67,7 @@ handleError(async () => {
         return;
     }
     // Initialize git
-    const projectName = (typeof argv.name === 'string'
+    const projectName = (createSubfolder
         ? argv.name
         : extractName(root)).toLowerCase();
     let gitURL = '';

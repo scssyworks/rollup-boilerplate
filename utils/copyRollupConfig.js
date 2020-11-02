@@ -3,11 +3,11 @@ const fs = require('fs-extra');
 const colors = require('colors');
 const { projectTypes } = require('./constants');
 const { sanitizeUrl } = require('.');
+const { root } = require('./tArgs');
 const currDir = path.resolve(sanitizeUrl(`${__dirname}`), '../configs');
-const currWorkingDir = sanitizeUrl(process.cwd());
 
 function writeConfig(readPath, fileName) {
-    fs.writeFileSync(`${currWorkingDir}/rollup.config.js`, fs.readFileSync(readPath, 'utf8').replace(/\{fileName\}/g, fileName), 'utf8');
+    fs.writeFileSync(`${root}/rollup.config.js`, fs.readFileSync(readPath, 'utf8').replace(/\{fileName\}/g, fileName), 'utf8');
 }
 
 module.exports = function copyRollupConfig(projectType, fileName) {

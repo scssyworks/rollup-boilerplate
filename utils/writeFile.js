@@ -1,8 +1,6 @@
 const { existsSync, writeFileSync, mkdirSync } = require('fs-extra');
 const colors = require('colors');
-const { sanitizeUrl } = require('.');
-
-const root = sanitizeUrl(process.cwd());
+const { root } = require('./tArgs');
 
 module.exports = function writeFile(type, path, content) {
     switch (type) {

@@ -1,11 +1,14 @@
 const childProcess = require('child_process');
 const colors = require('colors');
 const { projectTypes } = require('./constants');
-const { sanitizeUrl } = require('.');
 const { writeFileSync } = require('fs');
+const { root, isSubDirectory, argv } = require('./tArgs');
 
-const npmProcess = `npm${/^win/.test(process.platform) ? '.cmd' : ''}`;
-const workingDir = sanitizeUrl(process.cwd());
+let npmProcess = `npm${/^win/.test(process.platform) ? '.cmd' : ''}`;
+
+if (isSubDirectory) {
+    npmProcess += ` --prefix ./${argv.name}`;
+}
 
 const commonDeps = [
     '@babel/core@7',
@@ -56,13 +59,13 @@ module.exports = function installDeps(projectType) {
         childProcess.execSync(command, { stdio: [0, 1, 2] });
         if (projectType === projectTypes.RJ) {
             console.log(colors.blue('[Rename]: dependencies to peerDependencies'));
-            const packageJson = require(`${workingDir}/package.json`);
+            const packageJson = require(`${root}/package.json`);
             const peerDependencies = packageJson.dependencies;
             if (peerDependencies) {
                 packageJson.peerDependencies = peerDependencies;
                 delete packageJson.dependencies;
             }
-            writeFileSync(`${workingDir}/package.json`, JSON.stringify(packageJson, null, 2), 'utf8');
+            writeFileSync(`${root}/package.json`, JSON.stringify(packageJson, null, 2), 'utf8');
         }
         console.clear();
         console.log(colors.blue(`Use ${colors.bold('"npm run start"')} to start the dev server and ${colors.bold('"npm run build"')} to generate build files for production.`));
