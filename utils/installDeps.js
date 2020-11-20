@@ -84,7 +84,7 @@ module.exports = function installDeps(projectType) {
         }
         let command = `${npmProcess} i -D ${deps.join(' ')}`;
         if (projectType === projectTypes.RJ) {
-            command += ` && ${npmProcess} i ${initializeVersions(['react@latest', 'react-dom@latest'].join(' '))}`;
+            command += ` && ${npmProcess} i ${initializeVersions(['react@latest', 'react-dom@latest']).join(' ')}`;
         }
         childProcess.execSync(command, { stdio: [0, 1, 2] });
         if (projectType === projectTypes.RJ) {
