@@ -20,7 +20,8 @@ const allowedFiles = [
     '.travis.yml',
     'LICENSE',
     'LICENSE.txt',
-    'README.md'
+    'README.md',
+    'versions.json'
 ];
 
 function arrayMerge(targetArray, newArray) {
