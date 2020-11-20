@@ -35,7 +35,7 @@ try {
 function initializeVersions(deps) {
     return deps.map(dep => {
         const depName = dep.substring(0, dep.lastIndexOf('@'));
-        const depVersion = semver.valid(versions[depsName]) ? versions[depName] : dep.substring(dep.lastIndexOf('@') + 1);
+        const depVersion = semver.valid(versions[depName]) ? versions[depName] : dep.substring(dep.lastIndexOf('@') + 1);
         return `${depName}@${depVersion}`;
     });
 }
