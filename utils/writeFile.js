@@ -1,19 +1,38 @@
 const { existsSync, writeFileSync, mkdirSync } = require('fs-extra');
-const colors = require('colors');
 const { root } = require('./tArgs');
+const { logMessage } = require('./logger');
 
-module.exports = function writeFile(type, path, content) {
-    switch (type) {
-        case 'folder':
-            if (!existsSync(path)) {
-                console.log(colors.blue(`[Create]: ${path.replace(`${root}/`, '')} folder`));
-                mkdirSync(path);
-                break;
-            }
-        default:
-            if (!existsSync(path)) {
-                console.log(colors.blue(`[Write]: ${path.replace(`${root}/`, '')}`));
-                writeFileSync(path, content);
-            }
-    }
-}
+module.exports = function writeFile(type, paths, content, replace = false) {
+  paths = Array.isArray(paths) ? paths : [paths];
+  switch (type) {
+    case 'folder':
+      paths.forEach((path) => {
+        if (!existsSync(path) || replace) {
+          logMessage(
+            `${replace ? 'replace ==> ' : ''}folder ==> ${path.replace(
+              `${root}/`,
+              ''
+            )}`,
+            true,
+            'CR'
+          );
+          mkdirSync(path);
+        }
+      });
+      break;
+    default:
+      paths.forEach((path) => {
+        if (!existsSync(path) || replace) {
+          logMessage(
+            `${replace ? 'replace ==> ' : ''}file ==> ${path.replace(
+              `${root}/`,
+              ''
+            )}`,
+            true,
+            'WR'
+          );
+          writeFileSync(path, content);
+        }
+      });
+  }
+};

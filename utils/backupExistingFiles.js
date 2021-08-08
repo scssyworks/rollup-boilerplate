@@ -1,31 +1,26 @@
 const fs = require('fs-extra');
-const colors = require('colors');
 const { root } = require('./tArgs');
+const writeFile = require('./writeFile');
+const { logWarning } = require('./logger');
 
 module.exports = function (existingFiles = []) {
-    let targetFiles = [];
-    if (existingFiles.includes('.babelrc')) {
-        targetFiles.push('.babelrc');
+  // Create a backup folder for existing configuration files
+  writeFile('folder', `${root}/backup`);
+  let targetFiles = [];
+  [
+    '.babelrc',
+    '.babelrc.json',
+    'babel.config.js',
+    '.eslintrc',
+    '.eslintrc.json',
+    'eslint.config.js',
+  ].forEach((file) => {
+    if (existingFiles.includes(file)) {
+      targetFiles.push(file);
     }
-    if (existingFiles.includes('.babelrc.json')) {
-        targetFiles.push('.babelrc.json');
-    }
-    if (existingFiles.includes('babel.config.js')) {
-        targetFiles.push('babel.config.js');
-    }
-    if (existingFiles.includes('.eslintrc')) {
-        targetFiles.push('.eslintrc');
-    }
-    if (existingFiles.includes('.eslintrc.json')) {
-        targetFiles.push('.eslintrc.json');
-    }
-    if (existingFiles.includes('eslint.config.js')) {
-        targetFiles.push('eslint.config.js');
-    }
-    if (targetFiles.length) {
-        targetFiles.forEach(targetFile => {
-            fs.renameSync(`${root}/${targetFile}`, `${root}/backup/${targetFile}`);
-            console.log(colors.yellow(`[Moved]: ${targetFile} to /backup`));
-        });
-    }
+  });
+  targetFiles.forEach((targetFile) => {
+    fs.renameSync(`${root}/${targetFile}`, `${root}/backup/${targetFile}`);
+    logWarning(`${targetFile} to /backup`, true, `MV`);
+  });
 };

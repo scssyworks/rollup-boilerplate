@@ -40,14 +40,14 @@ export function render() {
 }`.trim();
 
 module.exports = function getSourceCode(projectType) {
-    switch (projectType) {
-        case projectTypes.TS:
-            return typescriptTemplate;
-        case projectTypes.JS:
-            return javascriptTemplate;
-        case projectTypes.RJ:
-            return reactTemplate;
-        default:
-            return `${commonCode}`;
-    }
-}
+  switch (projectType) {
+    case projectTypes.TS.value:
+      return typescriptTemplate;
+    case projectTypes.JS.value:
+      return javascriptTemplate;
+    case projectTypes.RJ.value:
+      return reactTemplate;
+    default:
+      return `${commonCode}`;
+  }
+};

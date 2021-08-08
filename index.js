@@ -1,19 +1,23 @@
 #!/usr/bin/env node
-const fs = require('fs-extra');
-const EventEmitter = require('events');
 const colors = require('colors');
 const inquirer = require('inquirer');
 const os = require('os');
 const {
-    extractName,
-    camelize,
-    hasAllowedItems,
-    arrayMerge,
-    defaultAllowedFiles
+  extractName,
+  camelize,
+  hasAllowedItems,
+  arrayMerge,
+  defaultAllowedFiles,
 } = require('./utils');
 const handleError = require('./utils/handleError');
 const resolveGit = require('./utils/gitResolver');
-const { projectTypes, extensions } = require('./utils/constants');
+const {
+  projectTypes,
+  extensions,
+  events,
+  getChoices,
+  getExtension,
+} = require('./utils/constants');
 const installDeps = require('./utils/installDeps');
 const packageJsonGenerator = require('./utils/packageJsonGenerator');
 const getSourceCode = require('./utils/getSourceCode');
@@ -25,171 +29,184 @@ const getIndexHtml = require('./utils/getIndexHtml');
 const copyRollupConfig = require('./utils/copyRollupConfig');
 const backupExistingFiles = require('./utils/backupExistingFiles');
 const generateEslintrc = require('./utils/generateEslintrc');
-const { argv, root } = require('./utils/tArgs');
+const { argv, root, ensureRoot } = require('./utils/tArgs');
+const getInstallEvent = require('./utils/getInstallEvent');
+const getPackageJson = require('./utils/getPackageJson');
+const { logError, logWarning } = require('./utils/logger');
 
-const installEvent = new EventEmitter();
-installEvent.on('inst', (projectType) => {
-    console.log(colors.green(`[Install]: Dependencies and dev-dependencies for "${projectType}"`));
-    try {
-        installDeps(projectType);
-    } catch (e) {
-        if (argv.logs) {
-            console.log(e);
-        }
-    }
-});
+const installEvent = getInstallEvent(installDeps);
 
 handleError(async () => {
-    const createSubfolder = typeof argv.name === 'string';
-    // If version is asked, then do nothing and return the current version
-    if (argv.version) {
-        console.log(require('./package.json').version);
-        return;
-    }
-    if (argv['no-install']) {
-        console.log(colors.yellow('[Info]: Skip npm install feature will be available in upcoming versions.'));
-    }
-    // check if root folder exists. If not then create the directory and sub-directory
-    if (!fs.existsSync(root)) {
-        console.log(root);
-        fs.mkdirsSync(root);
-    }
-    const existingFiles = fs.readdirSync(root);
-    // read existing package.json file
-    let packageJson = {};
-    if (existingFiles.includes('package.json')) {
-        packageJson = require(`${root}/package.json`);
-    }
-    // Get allowed files
-    const allowedFiles = arrayMerge(defaultAllowedFiles, packageJson.allowedFiles);
-    if (!hasAllowedItems(existingFiles, allowedFiles)) {
-        console.log(colors.bold(colors.red('Please make sure your current workspace is empty!')));
-        return;
-    }
-    // Initialize git
-    const projectName = (createSubfolder
-        ? argv.name
-        : extractName(root)).toLowerCase();
-    let gitURL = '';
-    try {
-        gitURL = await resolveGit();
-    } catch (e) { }
-    // Get input choices
-    const choices = [...Object.keys(projectTypes)];
-    const { projectType, fileName, projectDescription: description, author, keywords, buildPackage } = await inquirer.prompt([
-        {
-            type: 'list',
-            message: 'Select a project',
-            choices: choices.map(key => projectTypes[key]),
-            name: 'projectType',
-            default: projectTypes.TS
-        },
-        {
-            message: 'Library file name',
-            name: 'fileName',
-            type: 'input',
-            default: camelize(projectName)
-        },
-        {
-            message: 'Project description',
-            name: 'projectDescription',
-            type: 'input',
-            default: `Library project`
-        },
-        {
-            message: 'Name of the author',
-            name: 'author',
-            type: 'input',
-            default: (packageJson.author || os.userInfo().username)
-        },
-        {
-            message: 'Keywords (comma separated values)',
-            name: 'keywords',
-            type: 'input',
-            default: ((packageJson.keywords && packageJson.keywords.join(', ')) || 'library')
-        },
-        {
-            message: 'Build package before publishing?',
-            name: 'buildPackage',
-            type: 'confirm',
-            default: false
-        }
-    ]);
-    // Create package JSON
-    const testFile = `plugin.test.${extensions[choices.find(choice => projectTypes[choice] === projectType)]}`;
-    const config = {
-        name: projectName,
-        description,
-        scripts: {
-            start: 'rollup -c --watch --environment SERVE:true',
-            build: 'npm run test && rollup -c',
-            test: `jest ${testFile}`
-        },
-        author,
-        keywords: keywords.split(',').map(kw => kw.trim()),
-        main: `${fileName}.js`,
-        module: `${fileName}.mjs`
+  const createSubfolder = typeof argv.name === 'string';
+  // check if root folder exists. If not then create the directory and sub-directory
+  ensureRoot();
+  // read existing package.json file
+  let { packageJson, existingFiles } = getPackageJson();
+  // Get allowed files
+  const allowedFiles = arrayMerge(
+    defaultAllowedFiles,
+    packageJson.allowedFiles
+  );
+  if (!hasAllowedItems(existingFiles, allowedFiles)) {
+    return logError(
+      `Current working directory should be clean or contain following allowed files: ${colors.bold(
+        allowedFiles.join(', ')
+      )}. To allow more files add ${colors.bold(
+        '"allowedFiles"'
+      )} list in package.json.`,
+      true
+    );
+  }
+  // Initialize git
+  const projectName = (
+    createSubfolder ? argv.name : extractName(root)
+  ).toLowerCase();
+  let gitURL = await resolveGit();
+  // Get input choices
+  const choices = getChoices();
+  const {
+    projectType,
+    fileName,
+    projectDescription: description,
+    author,
+    keywords,
+    buildPackage,
+  } = await inquirer.prompt([
+    {
+      type: 'list',
+      message: 'Select a project',
+      choices: choices.map((key) => projectTypes[key]),
+      name: 'projectType',
+      default: projectTypes.TS,
+    },
+    {
+      message: 'Library file name',
+      name: 'fileName',
+      type: 'input',
+      default: camelize(projectName),
+    },
+    {
+      message: 'Project description',
+      name: 'projectDescription',
+      type: 'input',
+      default: `Library project`,
+    },
+    {
+      message: 'Name of the author',
+      name: 'author',
+      type: 'input',
+      default: packageJson.author || os.userInfo().username,
+    },
+    {
+      message: 'Keywords (comma separated values)',
+      name: 'keywords',
+      type: 'input',
+      default:
+        (packageJson.keywords && packageJson.keywords.join(', ')) || 'library',
+    },
+    {
+      message: 'Build package before publishing?',
+      name: 'buildPackage',
+      type: 'confirm',
+      default: true,
+    },
+  ]);
+  // Create package JSON
+  const fileExtension = extensions[getExtension(projectType)];
+  const testFile = `plugin.test.${fileExtension}`;
+  const config = {
+    name: projectName,
+    description,
+    scripts: {
+      start: 'rollup -c --watch --environment SERVE:true',
+      build: 'npm run test && rollup -c',
+      test: `jest ${testFile}`,
+    },
+    author,
+    keywords: keywords.split(',').map((kw) => kw.trim()),
+    main: `${fileName}.js`,
+    module: `${fileName}.mjs`,
+  };
+  if (gitURL) {
+    config.repository = {
+      type: 'git',
+      url: `git+${gitURL}`,
     };
-    if (gitURL) {
-        config.repository = {
-            type: 'git',
-            url: `git+${gitURL}`
-        };
-        config.bugs = {
-            url: `${gitURL.replace(/\.git$/, '')}/issues`
-        };
-        config.homepage = `${gitURL.replace(/\.git$/, '')}#readme`;
-    }
-    if (projectType === projectTypes.TS) {
-        config.scripts.build = 'npm run typegen && npm run test && rollup -c';
-        config.scripts.typegen = 'tsc --declaration --noEmit false --outDir dist/typings/ --emitDeclarationOnly --declarationMap';
-    }
-    packageJson = packageJsonGenerator(packageJson, config);
-    if (buildPackage) {
-        packageJson.scripts.prepublish = `${config.scripts.build} --silent`;
-    } else {
-        console.log(colors.yellow(`[Warn]: Make sure to build the package before publish or add a ${colors.bold('prepublish')} script.`));
-    }
-    // Write gitingore, npmignore and eslintignore files
-    writeFile('file', `${root}/.gitignore`, 'node_modules\n.vscode\ndist\nbackup');
-    writeFile('file', `${root}/.eslintignore`, 'node_modules\n.vscode\ndist\nbackup');
-    writeFile('file', `${root}/.npmignore`, 'node_modules\n.vscode\ndist\nbackup');
-    // Write package JSON in current directory
-    console.log(colors.blue(`[Write]: package.json`));
-    fs.writeFileSync(`${root}/package.json`, JSON.stringify(packageJson, null, 2));
-    // Write source file
-    // 1. Check if source file already exists
-    const sourceFileName = `index.${extensions[choices.find(choice => projectTypes[choice] === projectType)]}`;
-    writeFile('folder', `${root}/src`);
-    writeFile('file', `${root}/src/${sourceFileName}`, getSourceCode(projectType));
-    // Write start file
-    const startFileName = sourceFileName;
-    writeFile('folder', `${root}/render`);
-    writeFile('file', `${root}/render/${startFileName}`, `import { render } from '../src';\n\nrender();`);
-    // Write tsconfig.json for typescript projects
-    if (projectType === projectTypes.TS) {
-        writeFile('file', `${root}/tsconfig.json`, generateTsConfig());
-    }
-    // Write babel config
-    // 1. Create a backup folder for existing configuration files
-    writeFile('folder', `${root}/backup`);
-    // 2. backup existing config files
-    backupExistingFiles(existingFiles);
-    // 3. Create babel.config.js
-    writeFile('file', `${root}/babel.config.js`, generateBabelConfig(projectType));
-    // Write test file
-    writeFile('file', `${root}/${testFile}`, `test.todo('Write a test!');`);
-    // Create license file
-    writeFile('file', `${root}/LICENSE`, generateLicense(author));
-    // Create HTML file
-    writeFile('folder', `${root}/dist`);
-    writeFile('file', `${root}/dist/index.html`, getIndexHtml(fileName));
-    // Copy rollup configuration
-    copyRollupConfig(projectType, fileName);
-    // Create eslintrc file
-    writeFile('file', `${root}/.eslintrc`, generateEslintrc(projectType));
-    // Create README file
-    writeFile('field', `${root}/README.md`, `# ${fileName}\n${description}`);
-    // Install dependencies
-    installEvent.emit('inst', projectType);
+    config.bugs = {
+      url: `${gitURL.replace(/\.git$/, '')}/issues`,
+    };
+    config.homepage = `${gitURL.replace(/\.git$/, '')}#readme`;
+  }
+  if (projectType === projectTypes.TS.value) {
+    config.scripts.build = 'npm run typegen && npm run test && rollup -c';
+    config.scripts.typegen =
+      'tsc --declaration --noEmit false --outDir dist/typings/ --emitDeclarationOnly --declarationMap';
+  }
+  packageJson = packageJsonGenerator(packageJson, config);
+  if (buildPackage) {
+    packageJson.scripts.prepublish = `${config.scripts.build} --silent`;
+  } else {
+    logWarning(
+      `Make sure to build the package before publish or add a ${colors.bold(
+        'prepublish'
+      )} script.`,
+      true
+    );
+  }
+  // Write gitingore, npmignore and eslintignore files
+  writeFile(
+    'file',
+    [`${root}/.gitignore`, `${root}/.eslintignore`, `${root}/.npmignore`],
+    'node_modules\n.vscode\ndist\nbackup'
+  );
+  // Write package JSON in current directory
+  writeFile(
+    'file',
+    `${root}/package.json`,
+    JSON.stringify(packageJson, null, 2),
+    true
+  );
+  // Write source file
+  // 1. Check if source file already exists
+  const sourceFileName = `index.${fileExtension}`;
+  writeFile('folder', [`${root}/src`, `${root}/render`]);
+  writeFile(
+    'file',
+    `${root}/src/${sourceFileName}`,
+    getSourceCode(projectType)
+  );
+  // Write start file
+  const startFileName = sourceFileName;
+  writeFile(
+    'file',
+    `${root}/render/${startFileName}`,
+    `import { render } from '../src';\n\nrender();`
+  );
+  // Write tsconfig.json for typescript projects
+  if (projectType === projectTypes.TS.value) {
+    writeFile('file', `${root}/tsconfig.json`, generateTsConfig());
+  }
+  // Backup existing config files
+  backupExistingFiles(existingFiles);
+  // Create babel.config.js
+  writeFile(
+    'file',
+    `${root}/babel.config.js`,
+    generateBabelConfig(projectType)
+  );
+  // Write test file
+  writeFile('file', `${root}/${testFile}`, `test.todo('Write a test!');`);
+  // Create license file
+  writeFile('file', `${root}/LICENSE`, generateLicense(author));
+  // Create HTML file
+  writeFile('folder', `${root}/dist`);
+  writeFile('file', `${root}/dist/index.html`, getIndexHtml(fileName));
+  // Copy rollup configuration
+  copyRollupConfig(projectType, fileName);
+  // Create eslintrc file
+  writeFile('file', `${root}/.eslintrc`, generateEslintrc(projectType));
+  // Create README file
+  writeFile('field', `${root}/README.md`, `# ${fileName}\n${description}`);
+  // Install dependencies
+  installEvent.emit(events.INSTALL, projectType);
 }, argv.logs);
