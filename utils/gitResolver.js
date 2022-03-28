@@ -1,5 +1,5 @@
 const childProcess = require('child_process');
-const colors = require('colors');
+const colors = require('chalk').default;
 const fs = require('fs');
 const { sanitizeUrl } = require('.');
 const { logMessage } = require('./logger');

@@ -1,5 +1,5 @@
 const childProcess = require('child_process');
-const colors = require('colors');
+const colors = require('chalk').default;
 const { projectTypes } = require('./constants');
 const { writeFileSync } = require('fs');
 const { root } = require('./tArgs');
@@ -41,20 +41,20 @@ const commonDeps = initializeVersions([
   'rollup-plugin-eslint@7',
   'rollup-plugin-livereload@2',
   'rollup-plugin-serve@1',
-  'rollup-plugin-terser@7',
+  'rollup-plugin-terser@7'
 ]);
 
 const reactDeps = initializeVersions([
   '@babel/preset-react@7',
   '@rollup/plugin-replace@2',
-  'eslint-plugin-react@7',
+  'eslint-plugin-react@7'
 ]);
 
 const typescriptDeps = initializeVersions([
   '@babel/preset-typescript@7',
   '@typescript-eslint/eslint-plugin@4',
   '@typescript-eslint/parser@4',
-  'typescript@4',
+  'typescript@4'
 ]);
 
 module.exports = function installDeps(projectType) {
@@ -74,7 +74,7 @@ module.exports = function installDeps(projectType) {
     if (projectType === projectTypes.RJ.value) {
       command += ` && ${npmProcess} i ${initializeVersions([
         'react@latest',
-        'react-dom@latest',
+        'react-dom@latest'
       ]).join(' ')}`;
     }
     childProcess.execSync(command, { stdio: [0, 1, 2] });

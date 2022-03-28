@@ -1,4 +1,4 @@
-const colors = require('colors');
+const colors = require('chalk').default;
 const { argv } = require('../tArgs');
 
 module.exports = function logError(message, important = argv.logs, prefix) {

@@ -1,4 +1,4 @@
-const colors = require('colors');
+const colors = require('chalk').default;
 const { hasOwn } = require('.');
 const { logWarning } = require('./logger');
 
@@ -18,7 +18,7 @@ module.exports = function packageJsonGenerator(existingConfig, options = {}) {
   let targetConfig = existingConfig || {};
   options = Object.assign(
     {
-      version: '0.1.0',
+      version: '0.1.0'
     },
     options
   );
@@ -40,7 +40,7 @@ module.exports = function packageJsonGenerator(existingConfig, options = {}) {
     targetConfig.files = or(targetConfig.files, [
       'dist/umd',
       'dist/mjs',
-      'dist/typings/',
+      'dist/typings/'
     ]);
     targetConfig.license = or(targetConfig.license, 'MIT');
     // merge scripts

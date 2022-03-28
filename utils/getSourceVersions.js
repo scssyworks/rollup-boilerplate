@@ -1,5 +1,5 @@
 const { readFileSync } = require('fs');
-const colors = require('colors');
+const colors = require('chalk').default;
 const { logWarning, logMessage } = require('./logger');
 
 module.exports = function getSourceVersions() {
@@ -7,7 +7,7 @@ module.exports = function getSourceVersions() {
   try {
     versions = JSON.parse(
       readFileSync(`${process.cwd()}/versions.json`, {
-        encoding: 'utf8',
+        encoding: 'utf8'
       }).toString()
     );
   } catch (e) {
@@ -23,7 +23,7 @@ module.exports = function getSourceVersions() {
       JSON.stringify(
         {
           '@babel/core': '^7.0.0',
-          '@babel/preset-env': '~7.0.0',
+          '@babel/preset-env': '~7.0.0'
         },
         null,
         2

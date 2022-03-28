@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const colors = require('colors');
+const colors = require('chalk').default;
 const inquirer = require('inquirer');
 const os = require('os');
 const {
@@ -7,7 +7,7 @@ const {
   camelize,
   hasAllowedItems,
   arrayMerge,
-  defaultAllowedFiles,
+  defaultAllowedFiles
 } = require('./utils');
 const handleError = require('./utils/handleError');
 const resolveGit = require('./utils/gitResolver');
@@ -16,7 +16,7 @@ const {
   extensions,
   events,
   getChoices,
-  getExtension,
+  getExtension
 } = require('./utils/constants');
 const installDeps = require('./utils/installDeps');
 const packageJsonGenerator = require('./utils/packageJsonGenerator');
@@ -70,46 +70,46 @@ handleError(async () => {
     projectDescription: description,
     author,
     keywords,
-    buildPackage,
+    buildPackage
   } = await inquirer.prompt([
     {
       type: 'list',
       message: 'Select a project',
       choices: choices.map((key) => projectTypes[key]),
       name: 'projectType',
-      default: projectTypes.TS,
+      default: projectTypes.TS
     },
     {
       message: 'Library file name',
       name: 'fileName',
       type: 'input',
-      default: camelize(projectName),
+      default: camelize(projectName)
     },
     {
       message: 'Project description',
       name: 'projectDescription',
       type: 'input',
-      default: `Library project`,
+      default: `Library project`
     },
     {
       message: 'Name of the author',
       name: 'author',
       type: 'input',
-      default: packageJson.author || os.userInfo().username,
+      default: packageJson.author || os.userInfo().username
     },
     {
       message: 'Keywords (comma separated values)',
       name: 'keywords',
       type: 'input',
       default:
-        (packageJson.keywords && packageJson.keywords.join(', ')) || 'library',
+        (packageJson.keywords && packageJson.keywords.join(', ')) || 'library'
     },
     {
       message: 'Build package before publishing?',
       name: 'buildPackage',
       type: 'confirm',
-      default: true,
-    },
+      default: true
+    }
   ]);
   // Create package JSON
   const fileExtension = extensions[getExtension(projectType)];
@@ -120,20 +120,20 @@ handleError(async () => {
     scripts: {
       start: 'rollup -c --watch --environment SERVE:true',
       build: 'npm run test && rollup -c',
-      test: `jest ${testFile}`,
+      test: `jest ${testFile}`
     },
     author,
     keywords: keywords.split(',').map((kw) => kw.trim()),
     main: `${fileName}.js`,
-    module: `${fileName}.mjs`,
+    module: `${fileName}.mjs`
   };
   if (gitURL) {
     config.repository = {
       type: 'git',
-      url: `git+${gitURL}`,
+      url: `git+${gitURL}`
     };
     config.bugs = {
-      url: `${gitURL.replace(/\.git$/, '')}/issues`,
+      url: `${gitURL.replace(/\.git$/, '')}/issues`
     };
     config.homepage = `${gitURL.replace(/\.git$/, '')}#readme`;
   }
