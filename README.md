@@ -33,7 +33,7 @@ npx rollup-boilerplate -n myLibraryName
 
 This works the same as all the steps shown the Installation section.  There is no need to pre-install (npm install -g etc) the rollup-boilerplate library.  Instead npx will prompt you if any dependancies are missing.
 
-After running the above command with npx, just cd to the created directory and beging building.
+After running the above command with npx, just cd to the created directory and begin building.
 
 3. Provide the relevant details for you library and you're all set!
 
