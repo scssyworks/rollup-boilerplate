@@ -40,7 +40,7 @@ After running the above command with npx, just cd to the created directory and b
 Rollup-boilerplate does everything for you: From setting up project files to installing dependencies.
 
 # Using you library
-Once you have rollup-boilerplate is finished, add your code (e.g. index.js) etc.  Then run the build command to build all the version of your library and run the tests.
+Once you have rollup-boilerplate is finished, add your code (e.g. index.js) etc.  Then run the build command to build all the versions of your library and run the tests.
 
 If you are builing for a browser environment you may wish to install browser tooling such as js-dom, cypress etc.
 
